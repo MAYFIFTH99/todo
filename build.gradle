@@ -53,3 +53,26 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+tasks.register('release') {
+    /* ./gradle build를 먼저 실행 */
+    dependsOn('build')
+
+    doLast {
+        def stdout = new ByteArrayOutputStream()
+        /* exec - Command Line Processor로, PowerShell/Terminal 에서 실행하는 것과 동일 */
+        exec {
+            commandLine 'eb', 'setenv', 'SPRING_PROFILES_ACTIVE=prod'
+            standardOutput = stdout
+        }
+        /* 결과 로깅 */
+        println "eb setenv SPRING_PROFILES_ACTIVE=prod :\n$stdout";
+        exec {
+            /* $eb deploy */
+            commandLine 'eb', 'deploy'
+            standardOutput = stdout
+        }
+        println "eb deploy :\n$stdout";
+        println "Release Succeeded!"
+    }
+}
