@@ -59,20 +59,20 @@ tasks.register('release') {
     dependsOn('build')
 
     doLast {
-        def stdout = new ByteArrayOutputStream()
-        /* exec - Command Line Processor로, PowerShell/Terminal 에서 실행하는 것과 동일 */
-        exec {
+        def stdout1 = new ByteArrayOutputStream()
+        project.exec {
             commandLine 'eb', 'setenv', 'SPRING_PROFILES_ACTIVE=prod'
-            standardOutput = stdout
+            standardOutput = stdout1
         }
-        /* 결과 로깅 */
-        println "eb setenv SPRING_PROFILES_ACTIVE=prod :\n$stdout";
-        exec {
-            /* $eb deploy */
+        println "eb setenv SPRING_PROFILES_ACTIVE=prod :\n$stdout1"
+
+        def stdout2 = new ByteArrayOutputStream()
+        project.exec {
             commandLine 'eb', 'deploy'
-            standardOutput = stdout
+            standardOutput = stdout2
         }
-        println "eb deploy :\n$stdout";
+        println "eb deploy :\n$stdout2"
+
         println "Release Succeeded!"
     }
 }
