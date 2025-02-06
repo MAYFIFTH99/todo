@@ -46,7 +46,9 @@ public class WebSecurityConfig {
         configuration.setAllowedOriginPatterns(Arrays.asList(
                 "http://localhost:3000",
                 "http://app.mayfifth99.store",
-                "https://app.mayfifth99.store"
+                "https://app.mayfifth99.store",
+                "http://harvey-todo-ui.ap-northeast-2.elasticbeanstalk.com",
+                "https://harvey-todo-ui.ap-northeast-2.elasticbeanstalk.com"
                 ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));

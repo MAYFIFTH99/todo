@@ -55,10 +55,10 @@ tasks.named('test') {
 }
 
 tasks.register('release') {
-    /* ./gradle build를 먼저 실행 */
     dependsOn('build')
 
     doLast {
+        // 첫 번째 명령어 실행
         def stdout1 = new ByteArrayOutputStream()
         project.exec {
             commandLine 'eb', 'setenv', 'SPRING_PROFILES_ACTIVE=prod'
@@ -66,12 +66,21 @@ tasks.register('release') {
         }
         println "eb setenv SPRING_PROFILES_ACTIVE=prod :\n$stdout1"
 
+        // 두 번째 명령어 실행
         def stdout2 = new ByteArrayOutputStream()
         project.exec {
-            commandLine 'eb', 'deploy'
+            commandLine 'eb', 'setenv', 'SERVER_PORT=5000'
             standardOutput = stdout2
         }
-        println "eb deploy :\n$stdout2"
+        println "eb setenv SERVER_PORT=5000 :\n$stdout2"
+
+        // 배포 명령어 실행
+        def stdout3 = new ByteArrayOutputStream()
+        project.exec {
+            commandLine 'eb', 'deploy'
+            standardOutput = stdout3
+        }
+        println "eb deploy :\n$stdout3"
 
         println "Release Succeeded!"
     }
