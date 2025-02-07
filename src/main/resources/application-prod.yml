@@ -1,7 +1,7 @@
 server:
   port: 5000
 
-
+s
 spring:
   jpa:
     database: MYSQL
