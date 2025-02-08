@@ -1,11 +1,13 @@
 package book.todo.config;
 
 import book.todo.security.JwtAuthenticationFilter;
+import book.todo.security.OAuthUserServiceImpl;
 import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -22,7 +24,7 @@ import org.springframework.web.filter.CorsFilter;
 public class WebSecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
+    private final OAuthUserServiceImpl oAuthUserService;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -31,8 +33,14 @@ public class WebSecurityConfig {
                 .httpBasic(basic -> basic.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(
-                        auth -> auth.requestMatchers("/", "/auth/**").permitAll() //인증 없이 접근 허용
+                        auth -> auth.requestMatchers("/", "/auth/**","/oauth2/**").permitAll() //인증 없이 접근 허용
                                 .anyRequest().authenticated()//나머지 요청은 인증이 필요
+                )
+                .oauth2Login(oauth2-> oauth2
+                        .authorizationEndpoint(authorization -> authorization
+                        .baseUri("/oauth2/callback/*"))
+                        .userInfoEndpoint(userInfo -> userInfo
+                        .userService(oAuthUserService))
                 )
                 .addFilterAfter(jwtAuthenticationFilter,
                         CorsFilter.class);//JwtAuthenticationFilter를 CorsFilter 다음에 실행
